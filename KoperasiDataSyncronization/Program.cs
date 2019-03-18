@@ -16,7 +16,7 @@ namespace KoperasiDataSyncronization
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new KoperasiDataSync()
             };
             ServiceBase.Run(ServicesToRun);
         }

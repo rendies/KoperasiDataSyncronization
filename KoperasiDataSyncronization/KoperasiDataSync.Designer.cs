@@ -1,6 +1,6 @@
 ﻿namespace KoperasiDataSyncronization
 {
-    partial class Service1
+    partial class KoperasiDataSync
     {
         /// <summary> 
         /// Required designer variable.

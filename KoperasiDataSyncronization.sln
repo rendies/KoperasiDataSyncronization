@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KoperasiDataSyncronization", "KoperasiDataSyncronization\KoperasiDataSyncronization.csproj", "{0AD3130D-6943-441B-8E61-CF9C5233958E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KoperasiDataSyncUnitTest", "KoperasiDataSyncUnitTest\KoperasiDataSyncUnitTest.csproj", "{6206441F-4C0B-490D-A537-109985E0C01E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0AD3130D-6943-441B-8E61-CF9C5233958E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AD3130D-6943-441B-8E61-CF9C5233958E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AD3130D-6943-441B-8E61-CF9C5233958E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6206441F-4C0B-490D-A537-109985E0C01E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6206441F-4C0B-490D-A537-109985E0C01E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6206441F-4C0B-490D-A537-109985E0C01E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6206441F-4C0B-490D-A537-109985E0C01E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
