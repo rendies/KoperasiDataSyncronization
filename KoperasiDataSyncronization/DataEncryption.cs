@@ -13,6 +13,16 @@ namespace KoperasiDataSyncronization
 
         public string secret_iv { get; set; }
 
+        public DataEncryption()
+        {
+
+        }
+
+        public DataEncryption(string key, string iv)
+        {
+            secret_iv = iv;
+            secret_key = key;
+        }
         /* public string Encrypt(String plainText)
          {
 
