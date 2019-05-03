@@ -14,5 +14,6 @@ namespace KoperasiDataSyncronization
         public string CompanyName;
         public string ResignDate;
         public string flag_vms_sync;
+        public string reason;
     }
 }

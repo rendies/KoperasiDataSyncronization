@@ -34,7 +34,7 @@ namespace KoperasiDataSyncronization
                                                              "user id=" + "usr_kop" + ";" +
                                                              "password=" + "MNC_k0p" + ";";
 
-            //VMSAPITerminateUser();
+            VMSAPITerminateUser();
             VMSAPIUpdateDataUser();
         }
 
@@ -59,6 +59,7 @@ namespace KoperasiDataSyncronization
                     model.Name = reader["Name"].ToString();
                     model.CompanyName = reader["UnitBusiness"].ToString();
                     model.ResignDate = reader["resign_date"].ToString();
+                    model.reason = reader["resign_reason"].ToString();
 
                     TerminateModel.Add(model);
                 }
@@ -105,19 +106,22 @@ namespace KoperasiDataSyncronization
 
         public Boolean VMSAPITerminateUser()
         {
+            List<string> message = new List<string>();
             foreach(VMSTerminateModel model in GetEmployeeTerminate())
             {
                 var client = new RestClient("http://117.102.82.138");
                 var request = new RestRequest("erp/api_vms_request_noactive.php", Method.GET);
 
                 request.AddParameter("hash", dataEncryption.Encrypt(DateTime.Now.ToString("yyyy-MM-dd"))); // adds to POST or URL querystring based on Method
-                request.AddParameter("user", dataEncryption.Encrypt("test.local"));
+                request.AddParameter("user", dataEncryption.Encrypt("api.koperasi.local"));
                 request.AddParameter("NIK", model.NIK);
                 request.AddParameter("name", model.Name);
                 request.AddParameter("company", model.CompanyName);
+                request.AddParameter("msg", model.reason);
 
                 var response = client.Execute(request);
                 JObject data = (JObject)JsonConvert.DeserializeObject(response.Content);
+                message.Add(data["message"].ToString());
                 if(data["status"].ToString() == "1")
                 {
                     model.flag_vms_sync = "1";
@@ -138,23 +142,25 @@ namespace KoperasiDataSyncronization
             var request = new RestRequest("erp/api_vms_update_data.php", Method.GET);
 
             request.AddParameter("hash", dataEncryption.Encrypt(DateTime.Now.ToString("yyyy-MM-dd"))); // adds to POST or URL querystring based on Method
-            request.AddParameter("user", dataEncryption.Encrypt("test.local"));
-            request.AddParameter("date", DateTime.Now.ToString("yyyy-MM-dd"));
+            request.AddParameter("user", dataEncryption.Encrypt("api.koperasi.local"));
+            request.AddParameter("date", DateTime.Parse("").ToString("yyyy-MM-dd"));
 
             var response = client.Execute(request);
             //VMSAPIModel data = JsonConvert.DeserializeObject<VMSAPIModel>(response.Content);
             var data = (JObject)JsonConvert.DeserializeObject(response.Content);
             VMSDataModel model = new VMSDataModel();
-
-            foreach (var item in data["data"])
+            if (data["data"] != null)
             {
-                model.NIK = item[3].ToString();
-                model.Name = item[1].ToString();
-                model.UnitBusiness = item[2].ToString();
-                model.CardNo = item[0].ToString();
-                model.Photo = item[4].ToString();
+                foreach (var item in data["data"])
+                {
+                    model.NIK = item[3].ToString();
+                    model.Name = item[1].ToString();
+                    model.UnitBusiness = item[2].ToString();
+                    model.CardNo = item[0].ToString();
+                    model.Photo = item[4].ToString();
 
-                UpdateDataVMS(model);
+                    UpdateDataVMS(model);
+                }
             }
 
             return false;
