@@ -73,6 +73,9 @@
     <Compile Include="VMSTerminateModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="KoperasiDataSync.resx">
+      <DependentUpon>KoperasiDataSync.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>

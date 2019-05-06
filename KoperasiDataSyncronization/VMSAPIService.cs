@@ -24,6 +24,8 @@ namespace KoperasiDataSyncronization
     {
         DataEncryption dataEncryption;
         string conString;
+        public bool terminanteUserResult;
+        public bool updateUserResult;
 
         public VMSAPIService()
         {
@@ -34,8 +36,8 @@ namespace KoperasiDataSyncronization
                                                              "user id=" + "usr_kop" + ";" +
                                                              "password=" + "MNC_k0p" + ";";
 
-            VMSAPITerminateUser();
-            VMSAPIUpdateDataUser();
+            terminanteUserResult = VMSAPITerminateUser();
+            updateUserResult = VMSAPIUpdateDataUser();
         }
 
         public List<VMSTerminateModel> GetEmployeeTerminate()
@@ -143,7 +145,7 @@ namespace KoperasiDataSyncronization
 
             request.AddParameter("hash", dataEncryption.Encrypt(DateTime.Now.ToString("yyyy-MM-dd"))); // adds to POST or URL querystring based on Method
             request.AddParameter("user", dataEncryption.Encrypt("api.koperasi.local"));
-            request.AddParameter("date", DateTime.Parse("").ToString("yyyy-MM-dd"));
+            request.AddParameter("date", DateTime.Now.ToString("yyyy-MM-dd"));
 
             var response = client.Execute(request);
             //VMSAPIModel data = JsonConvert.DeserializeObject<VMSAPIModel>(response.Content);

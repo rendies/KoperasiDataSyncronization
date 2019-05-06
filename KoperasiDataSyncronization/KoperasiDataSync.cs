@@ -27,11 +27,9 @@ namespace KoperasiDataSyncronization
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
             timer.Interval = 60000; //number in milisecinds  
             timer.Enabled = true;
+            
         }
-
         
-
-
 
         protected override void OnStop()
         {
@@ -40,6 +38,9 @@ namespace KoperasiDataSyncronization
         private void OnElapsedTime(object source, ElapsedEventArgs e)
         {
             WriteToFile("Service is recall at " + DateTime.Now);
+            VMSAPIService result =  new VMSAPIService();
+            WriteToFile("Terminate User Job Sync: " + result.terminanteUserResult.ToString() + " at: " + DateTime.Now);
+            WriteToFile("Update User Job Sync: " + result.updateUserResult.ToString() + " at: " + DateTime.Now);
         }
         public void WriteToFile(string Message)
         {
