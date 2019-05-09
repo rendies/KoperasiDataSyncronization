@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Data.SqlClient;
 using System.Data;
 using Newtonsoft.Json.Linq;
+using System.Configuration;
 
 namespace KoperasiDataSyncronization
 {
@@ -24,20 +25,17 @@ namespace KoperasiDataSyncronization
     {
         DataEncryption dataEncryption;
         string conString;
-        public bool terminanteUserResult;
-        public bool updateUserResult;
+        public string terminanteUserResult;
+        public string updateUserResult;
 
         public VMSAPIService()
         {
             Console.WriteLine("VMS API Data Syncronizer Services - Started -");
-            dataEncryption = new DataEncryption("(IV8FxF!cv~JT3)v+iVRb/Kr@{kipW", "apasajakalauyangini");
-            conString =  "data source=" + "172.17.20.38" + ";" +
-                                                             "database=" + "db_koperasi" + ";" +
-                                                             "user id=" + "usr_kop" + ";" +
-                                                             "password=" + "MNC_k0p" + ";";
+            dataEncryption = new DataEncryption(ConfigurationManager.AppSettings["VMSJOB_Key"], ConfigurationManager.AppSettings["VMSJOB_IV"]);
+            conString = ConfigurationManager.AppSettings["ConfigDBServer"];
 
-            terminanteUserResult = VMSAPITerminateUser();
-            updateUserResult = VMSAPIUpdateDataUser();
+            VMSAPITerminateUser();
+            VMSAPIUpdateDataUser();
         }
 
         public List<VMSTerminateModel> GetEmployeeTerminate()
@@ -108,6 +106,7 @@ namespace KoperasiDataSyncronization
 
         public Boolean VMSAPITerminateUser()
         {
+            bool result = false;
             List<string> message = new List<string>();
             foreach(VMSTerminateModel model in GetEmployeeTerminate())
             {
@@ -122,24 +121,29 @@ namespace KoperasiDataSyncronization
                 request.AddParameter("msg", model.reason);
 
                 var response = client.Execute(request);
+                terminanteUserResult = response.Content;
                 JObject data = (JObject)JsonConvert.DeserializeObject(response.Content);
                 message.Add(data["message"].ToString());
                 if(data["status"].ToString() == "1")
                 {
                     model.flag_vms_sync = "1";
                     
-                    UpdateFlagEmpTerminate(model);
+                    result = UpdateFlagEmpTerminate(model);
+                    if (!result)
+                    {
+                        return result;
+                    }
                 }
                 
             }
             
 
-            return false;
+            return result;
         }
 
         public Boolean VMSAPIUpdateDataUser()
         {
-
+            bool result = false;
             var client = new RestClient("http://117.102.82.138");
             var request = new RestRequest("erp/api_vms_update_data.php", Method.GET);
 
@@ -148,7 +152,7 @@ namespace KoperasiDataSyncronization
             request.AddParameter("date", DateTime.Now.ToString("yyyy-MM-dd"));
 
             var response = client.Execute(request);
-            //VMSAPIModel data = JsonConvert.DeserializeObject<VMSAPIModel>(response.Content);
+            updateUserResult = response.Content;
             var data = (JObject)JsonConvert.DeserializeObject(response.Content);
             VMSDataModel model = new VMSDataModel();
             if (data["data"] != null)
@@ -161,11 +165,16 @@ namespace KoperasiDataSyncronization
                     model.CardNo = item[0].ToString();
                     model.Photo = item[4].ToString();
 
-                    UpdateDataVMS(model);
+                    result = UpdateDataVMS(model);
+
+                    if (!result)
+                    {
+                        return result;
+                    }
                 }
             }
 
-            return false;
+            return result;
         }
 
         public Boolean UpdateDataVMS(VMSDataModel model)

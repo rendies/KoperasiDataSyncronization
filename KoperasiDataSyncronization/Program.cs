@@ -13,14 +13,17 @@ namespace KoperasiDataSyncronization
         /// </summary>
         static void Main()
         {
-            /*ServiceBase[] ServicesToRun;
+            ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
                 new KoperasiDataSync()
             };
-            ServiceBase.Run(ServicesToRun);*/
 
-            new VMSAPIService();
+            ServiceBase.Run(ServicesToRun);
+
+            //new KoperasiDataSync().TestOnElapsedTime();
+
+            //new VMSAPIService();
         }
     }
 }

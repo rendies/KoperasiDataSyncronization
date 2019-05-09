@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -15,21 +16,38 @@ namespace KoperasiDataSyncronization
     public partial class KoperasiDataSync : ServiceBase
     {
         Timer timer = new Timer();
+        VMSJobConfig config = new VMSJobConfig();
 
         public KoperasiDataSync()
         {
             InitializeComponent();
+
         }
 
         protected override void OnStart(string[] args)
         {
             WriteToFile("Service is started at " + DateTime.Now);
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 60000; //number in milisecinds  
-            timer.Enabled = true;
-            
+            timer.Interval = int.Parse(ConfigurationManager.AppSettings["Timer_Elapse"]); //number in milisecinds  
+            timer.Enabled = true;            
         }
-        
+        public void TestOnElapsedTime()
+        {
+
+
+            WriteToFile("Service is recall =============== at " + DateTime.Now);
+
+            if (config.CheckIsScheduleJobMustRunning())
+            {
+                WriteToFile("Service Started " + DateTime.Now);
+                VMSAPIService result = new VMSAPIService();
+                WriteToFile("Terminate User Job Sync: " + result.terminanteUserResult.ToString() + " at: " + DateTime.Now);
+                WriteToFile("Update User Job Sync: " + result.updateUserResult.ToString() + " at: " + DateTime.Now);
+                config.InsertLog(DateTime.Now, "API Terminate", "Terminate User Job Sync: " + result.terminanteUserResult.ToString() + " at: " + DateTime.Now);
+                config.InsertLog(DateTime.Now, "API Update", "Update User Job Sync: " + result.updateUserResult.ToString() + " at: " + DateTime.Now);
+            }
+            WriteToFile("Service Recall end =============== " + DateTime.Now);
+        }
 
         protected override void OnStop()
         {
@@ -37,10 +55,20 @@ namespace KoperasiDataSyncronization
         }
         private void OnElapsedTime(object source, ElapsedEventArgs e)
         {
-            WriteToFile("Service is recall at " + DateTime.Now);
-            VMSAPIService result =  new VMSAPIService();
-            WriteToFile("Terminate User Job Sync: " + result.terminanteUserResult.ToString() + " at: " + DateTime.Now);
-            WriteToFile("Update User Job Sync: " + result.updateUserResult.ToString() + " at: " + DateTime.Now);
+            
+
+            WriteToFile("Service is recall =============== at " + DateTime.Now);
+
+            if(config.CheckIsScheduleJobMustRunning())
+            {
+                WriteToFile("Service Started " + DateTime.Now);
+                VMSAPIService result = new VMSAPIService();
+                WriteToFile("Terminate User Job Sync: " + result.terminanteUserResult.ToString() + " at: " + DateTime.Now);
+                WriteToFile("Update User Job Sync: " + result.updateUserResult.ToString() + " at: " + DateTime.Now);
+                config.InsertLog(DateTime.Now, "API Terminate", "Terminate User Job Sync: " + result.terminanteUserResult.ToString() + " at: " + DateTime.Now);
+                config.InsertLog(DateTime.Now, "API Update", "Update User Job Sync: " + result.updateUserResult.ToString() + " at: " + DateTime.Now);
+            }
+            WriteToFile("Service Recall end =============== " + DateTime.Now);
         }
         public void WriteToFile(string Message)
         {
